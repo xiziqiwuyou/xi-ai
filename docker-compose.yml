@@ -1,0 +1,9 @@
+services:
+  xi-ai-api-docs:
+    build:
+      context: .
+    image: xi-ai-api-docs:latest
+    container_name: xi-ai-api-docs
+    ports:
+      - "8080:80"
+    restart: unless-stopped

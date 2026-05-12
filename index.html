@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xi AI API 文档</title>
+    <meta
+      name="description"
+      content="api.xi-ai.cn 的 AI 模型接口文档，包含 cURL 在线测试与返回调试。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="icon-button mobile-only" id="sidebarToggle" type="button" aria-label="打开导航">
+        <i data-lucide="menu"></i>
+      </button>
+      <a class="brand" href="#overview" aria-label="Xi AI API 文档首页">
+        <span class="brand-mark">XI</span>
+        <span class="brand-text">Xi AI API</span>
+      </a>
+      <div class="base-chip" aria-label="API 基础地址">
+        <i data-lucide="globe-2"></i>
+        <code>https://api.xi-ai.cn/v1</code>
+      </div>
+      <label class="doc-search">
+        <i data-lucide="search"></i>
+        <input id="docSearch" type="search" placeholder="搜索接口、参数、错误码" autocomplete="off" />
+      </label>
+      <a class="top-action" href="#tester">
+        <i data-lucide="terminal-square"></i>
+        <span>在线测试</span>
+      </a>
+    </header>
+
+    <div class="docs-shell">
+      <aside class="sidebar" id="sidebar" aria-label="文档导航">
+        <nav class="side-nav">
+          <p class="nav-label">开始</p>
+          <a href="#overview" class="active">概览</a>
+          <a href="#quickstart">快速开始</a>
+          <a href="#auth">认证方式</a>
+
+          <p class="nav-label">模型接口</p>
+          <a href="#models">模型列表</a>
+          <a href="#chat">对话补全</a>
+          <a href="#embeddings">文本向量</a>
+          <a href="#images">图像生成</a>
+
+          <p class="nav-label">调试</p>
+          <a href="#errors">错误码</a>
+          <a href="#debugging">返回调试</a>
+          <a href="#tester">cURL 在线测试</a>
+        </nav>
+      </aside>
+
+      <main class="content" id="content">
+        <section class="doc-section first" id="overview">
+          <p class="eyebrow">OpenAI-compatible model API</p>
+          <h1>Xi AI 模型接口文档</h1>
+          <p class="lead">
+            通过统一的 HTTPS 接口调用文本对话、模型列表、向量生成和图像生成能力。本文档以
+            <code>api.xi-ai.cn</code> 为服务域名，示例默认使用 <code>/v1</code> 版本路径。
+          </p>
+
+          <div class="signal-grid">
+            <article class="signal-card">
+              <i data-lucide="link"></i>
+              <span>Base URL</span>
+              <strong>https://api.xi-ai.cn/v1</strong>
+            </article>
+            <article class="signal-card">
+              <i data-lucide="key-round"></i>
+              <span>Auth</span>
+              <strong>Bearer API Key</strong>
+            </article>
+            <article class="signal-card">
+              <i data-lucide="braces"></i>
+              <span>Content-Type</span>
+              <strong>application/json</strong>
+            </article>
+          </div>
+
+          <div class="flow-strip" aria-label="API 请求流程">
+            <div class="flow-node">
+              <i data-lucide="terminal"></i>
+              <span>Client</span>
+            </div>
+            <i class="flow-arrow" data-lucide="arrow-right"></i>
+            <div class="flow-node">
+              <i data-lucide="shield-check"></i>
+              <span>Bearer Token</span>
+            </div>
+            <i class="flow-arrow" data-lucide="arrow-right"></i>
+            <div class="flow-node">
+              <i data-lucide="cpu"></i>
+              <span>Xi AI Models</span>
+            </div>
+            <i class="flow-arrow" data-lucide="arrow-right"></i>
+            <div class="flow-node">
+              <i data-lucide="file-json"></i>
+              <span>JSON Response</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="quickstart">
+          <div class="section-heading">
+            <p class="eyebrow">Quickstart</p>
+            <h2>快速开始</h2>
+          </div>
+          <p>
+            所有请求都应通过 HTTPS 发送，并在请求头中携带 API Key。下面的示例调用对话补全接口，
+            返回模型生成的文本结果和用量信息。
+          </p>
+          <div class="code-toolbar">
+            <span>cURL</span>
+            <button class="icon-button" type="button" data-copy-source="quickstartCode" aria-label="复制快速开始示例">
+              <i data-lucide="copy"></i>
+            </button>
+          </div>
+          <pre class="code-block"><code id="quickstartCode">curl --request POST 'https://api.xi-ai.cn/v1/chat/completions' \
+  --header 'Authorization: Bearer $XI_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "model": "gpt-4o-mini",
+    "messages": [
+      {
+        "role": "user",
+        "content": "用一句话介绍 Xi AI API。"
+      }
+    ],
+    "temperature": 0.7,
+    "max_tokens": 256
+  }'</code></pre>
+        </section>
+
+        <section class="doc-section" id="auth">
+          <div class="section-heading">
+            <p class="eyebrow">Authentication</p>
+            <h2>认证方式</h2>
+          </div>
+          <p>
+            在每个 API 请求中加入 <code>Authorization</code> 请求头。API Key 请只在服务端环境、
+            私有终端或受信任的调试页面中使用。
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Header</th>
+                  <th>必填</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>Authorization</code></td>
+                  <td>是</td>
+                  <td><code>Bearer sk-...</code> 格式的访问令牌。</td>
+                </tr>
+                <tr>
+                  <td><code>Content-Type</code></td>
+                  <td>POST 请求必填</td>
+                  <td>固定为 <code>application/json</code>。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc-section" id="models">
+          <div class="endpoint-title">
+            <div>
+              <p class="eyebrow">Models</p>
+              <h2>获取模型列表</h2>
+            </div>
+            <span class="method get">GET</span>
+          </div>
+          <p>查询当前账号可用的模型。模型名称以实际控制台权限为准。</p>
+          <div class="endpoint-line"><code>GET /v1/models</code></div>
+          <div class="code-toolbar">
+            <span>请求示例</span>
+            <button class="icon-button" type="button" data-copy-source="modelsCode" aria-label="复制模型列表示例">
+              <i data-lucide="copy"></i>
+            </button>
+          </div>
+          <pre class="code-block"><code id="modelsCode">curl --request GET 'https://api.xi-ai.cn/v1/models' \
+  --header 'Authorization: Bearer $XI_API_KEY'</code></pre>
+          <h3>响应示例</h3>
+          <pre class="code-block muted"><code>{
+  "object": "list",
+  "data": [
+    {
+      "id": "gpt-4o-mini",
+      "object": "model",
+      "owned_by": "xi-ai"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section class="doc-section" id="chat">
+          <div class="endpoint-title">
+            <div>
+              <p class="eyebrow">Chat Completions</p>
+              <h2>创建对话补全</h2>
+            </div>
+            <span class="method post">POST</span>
+          </div>
+          <p>
+            对话补全接口接受按角色组织的消息数组，适用于聊天机器人、文本生成、信息抽取和工具调用前的意图理解。
+          </p>
+          <div class="endpoint-line"><code>POST /v1/chat/completions</code></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>参数</th>
+                  <th>类型</th>
+                  <th>必填</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>model</code></td>
+                  <td>string</td>
+                  <td>是</td>
+                  <td>要调用的模型 ID，例如 <code>gpt-4o-mini</code>。</td>
+                </tr>
+                <tr>
+                  <td><code>messages</code></td>
+                  <td>array</td>
+                  <td>是</td>
+                  <td>消息列表，常用角色为 <code>system</code>、<code>user</code>、<code>assistant</code>。</td>
+                </tr>
+                <tr>
+                  <td><code>temperature</code></td>
+                  <td>number</td>
+                  <td>否</td>
+                  <td>采样温度，推荐范围 0 到 2。</td>
+                </tr>
+                <tr>
+                  <td><code>max_tokens</code></td>
+                  <td>integer</td>
+                  <td>否</td>
+                  <td>限制生成文本的最大 token 数。</td>
+                </tr>
+                <tr>
+                  <td><code>stream</code></td>
+                  <td>boolean</td>
+                  <td>否</td>
+                  <td>是否启用流式响应。浏览器调试台默认关闭。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>响应字段</h3>
+          <pre class="code-block muted"><code>{
+  "id": "chatcmpl_xxx",
+  "object": "chat.completion",
+  "created": 1710000000,
+  "model": "gpt-4o-mini",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Xi AI API 提供统一的模型调用入口。"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 18,
+    "completion_tokens": 16,
+    "total_tokens": 34
+  }
+}</code></pre>
+        </section>
+
+        <section class="doc-section" id="embeddings">
+          <div class="endpoint-title">
+            <div>
+              <p class="eyebrow">Embeddings</p>
+              <h2>创建文本向量</h2>
+            </div>
+            <span class="method post">POST</span>
+          </div>
+          <p>
+            将文本转换为向量，可用于语义检索、聚类、推荐排序和 RAG 知识库召回。
+          </p>
+          <div class="endpoint-line"><code>POST /v1/embeddings</code></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>参数</th>
+                  <th>类型</th>
+                  <th>必填</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>model</code></td>
+                  <td>string</td>
+                  <td>是</td>
+                  <td>向量模型 ID，例如 <code>text-embedding-3-large</code>。</td>
+                </tr>
+                <tr>
+                  <td><code>input</code></td>
+                  <td>string | array</td>
+                  <td>是</td>
+                  <td>要转换为向量的文本或文本数组。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <pre class="code-block standalone"><code>curl --request POST 'https://api.xi-ai.cn/v1/embeddings' \
+  --header 'Authorization: Bearer $XI_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "model": "text-embedding-3-large",
+    "input": "Xi AI API 支持统一模型调用。"
+  }'</code></pre>
+        </section>
+
+        <section class="doc-section" id="images">
+          <div class="endpoint-title">
+            <div>
+              <p class="eyebrow">Images</p>
+              <h2>创建图像生成任务</h2>
+            </div>
+            <span class="method post">POST</span>
+          </div>
+          <p>
+            根据自然语言提示词生成图像。不同模型支持的尺寸、质量、返回格式可能不同，请以接口实际返回为准。
+          </p>
+          <div class="endpoint-line"><code>POST /v1/images/generations</code></div>
+          <pre class="code-block standalone"><code>curl --request POST 'https://api.xi-ai.cn/v1/images/generations' \
+  --header 'Authorization: Bearer $XI_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "model": "gpt-image-1",
+    "prompt": "一张干净的 API 控制台产品截图风格插画",
+    "size": "1024x1024",
+    "n": 1
+  }'</code></pre>
+        </section>
+
+        <section class="doc-section" id="errors">
+          <div class="section-heading">
+            <p class="eyebrow">Errors</p>
+            <h2>错误码</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>HTTP 状态</th>
+                  <th>常见原因</th>
+                  <th>处理建议</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>400</code></td>
+                  <td>请求体格式错误、参数缺失或模型不支持该参数。</td>
+                  <td>检查 JSON、参数类型和模型 ID。</td>
+                </tr>
+                <tr>
+                  <td><code>401</code></td>
+                  <td>API Key 缺失、错误或已失效。</td>
+                  <td>重新生成 Key，并确认 Bearer 前缀。</td>
+                </tr>
+                <tr>
+                  <td><code>403</code></td>
+                  <td>账号无权访问该模型或资源。</td>
+                  <td>确认模型权限、套餐和组织配置。</td>
+                </tr>
+                <tr>
+                  <td><code>429</code></td>
+                  <td>请求频率过高或额度不足。</td>
+                  <td>降低并发，查看限流响应头和账户余额。</td>
+                </tr>
+                <tr>
+                  <td><code>500</code></td>
+                  <td>服务端或上游模型服务异常。</td>
+                  <td>记录请求 ID，稍后重试或联系支持。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc-section" id="debugging">
+          <div class="section-heading">
+            <p class="eyebrow">Debugging</p>
+            <h2>返回调试</h2>
+          </div>
+          <p>
+            在线测试面板会展示状态码、耗时、响应头和格式化后的响应体。若浏览器提示跨域错误，
+            说明接口未允许当前页面源直接访问，可复制生成的 cURL 在终端执行，或在自己的服务端增加调试代理。
+          </p>
+          <div class="debug-grid">
+            <div class="debug-item">
+              <i data-lucide="timer"></i>
+              <strong>Latency</strong>
+              <span>定位网络耗时、上游排队和超时问题。</span>
+            </div>
+            <div class="debug-item">
+              <i data-lucide="list-tree"></i>
+              <strong>Headers</strong>
+              <span>查看请求 ID、限流、缓存和内容类型。</span>
+            </div>
+            <div class="debug-item">
+              <i data-lucide="bug"></i>
+              <strong>Error Body</strong>
+              <span>读取 <code>error.message</code>、<code>error.type</code> 和错误码。</span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="tester" id="tester" aria-label="cURL 在线测试">
+        <div class="tester-head">
+          <div>
+            <p class="eyebrow">Console</p>
+            <h2>cURL 在线测试</h2>
+          </div>
+          <span class="method post" id="methodBadge">POST</span>
+        </div>
+
+        <form id="testForm" class="tester-form">
+          <label class="field">
+            <span>Base URL</span>
+            <input id="baseUrl" type="url" value="https://api.xi-ai.cn/v1" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>API Key</span>
+            <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>接口</span>
+            <select id="endpointSelect">
+              <option value="chat">POST /chat/completions</option>
+              <option value="models">GET /models</option>
+              <option value="embeddings">POST /embeddings</option>
+              <option value="images">POST /images/generations</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>模型</span>
+            <input id="modelInput" type="text" value="gpt-4o-mini" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>输入内容</span>
+            <textarea id="promptInput" rows="4">用一句话介绍 Xi AI API。</textarea>
+          </label>
+
+          <div class="field-row">
+            <label class="field compact">
+              <span>Temperature</span>
+              <input id="temperatureInput" type="number" min="0" max="2" step="0.1" value="0.7" />
+            </label>
+            <label class="field compact">
+              <span>Max tokens</span>
+              <input id="maxTokensInput" type="number" min="1" max="8192" step="1" value="256" />
+            </label>
+          </div>
+
+          <label class="checkline">
+            <input id="streamInput" type="checkbox" />
+            <span>stream</span>
+          </label>
+        </form>
+
+        <div class="tester-actions">
+          <button class="primary-button" id="sendRequest" type="button">
+            <i data-lucide="play"></i>
+            <span>发送测试</span>
+          </button>
+          <button class="secondary-button" id="copyCurl" type="button">
+            <i data-lucide="copy"></i>
+            <span>复制 cURL</span>
+          </button>
+        </div>
+
+        <div class="code-toolbar sticky-toolbar">
+          <span>生成的 cURL</span>
+          <button class="icon-button" id="refreshCurl" type="button" aria-label="重新生成 cURL">
+            <i data-lucide="refresh-cw"></i>
+          </button>
+        </div>
+        <pre class="code-block curl-output"><code id="curlOutput"></code></pre>
+
+        <div class="response-head">
+          <div>
+            <p class="eyebrow">Response</p>
+            <h3>返回调试</h3>
+          </div>
+          <button class="icon-button" id="copyResponse" type="button" aria-label="复制响应">
+            <i data-lucide="clipboard"></i>
+          </button>
+        </div>
+
+        <div class="status-line" id="statusLine">
+          <span class="status-dot idle"></span>
+          <span id="responseStatus">等待请求</span>
+          <span id="responseTime"></span>
+        </div>
+
+        <div class="tabbar" role="tablist" aria-label="响应视图">
+          <button class="tab active" type="button" data-tab="body">Body</button>
+          <button class="tab" type="button" data-tab="headers">Headers</button>
+          <button class="tab" type="button" data-tab="insights">Debug</button>
+        </div>
+
+        <pre class="response-code"><code id="responseOutput">{
+  "status": "ready",
+  "message": "填写 API Key 后点击发送测试。"
+}</code></pre>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
