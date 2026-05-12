@@ -18,6 +18,8 @@ docker compose up --build
 http://localhost:8080
 ```
 
+如需修改宿主机端口，可复制 `.env.example` 为 `.env` 并调整 `HOST_PORT`。
+
 ## 手动构建
 
 ```bash
