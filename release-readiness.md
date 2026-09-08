@@ -30,10 +30,14 @@ workspace, so those gates remain blocked or unverified.
   Git-object bytes; it does not change application content.
 - GitHub comparison before merging: `ahead 2`, `behind 0`, status `ahead`;
   local and remote trees both contain 433 files with zero blob mismatches.
-- Final GitHub ref update: `main` fast-forwarded with `force=false` from
-  `0aac93e800ed5e8c0c4e416cf4efc277d88a8951` to
-  `5c98e15c564ffa99d127e7b88e1df9ab451d50eb`. The review branch and `main`
-  now point to the same commit.
+- Initial GitHub integration checkpoint: `main` fast-forwarded with
+  `force=false` from `0aac93e800ed5e8c0c4e416cf4efc277d88a8951` to
+  `5c98e15c564ffa99d127e7b88e1df9ab451d50eb`; the review branch and `main`
+  pointed to the same commit at that checkpoint.
+- Follow-up provider correction: local commit `93120b2` keeps the Gemini model
+  binding in the URL path only. It was fast-forwarded without force to remote
+  commit `72fefe6879306c31853ff5386778527c72246ffa`; later evidence-only
+  commits may advance both refs without changing the release tree boundary.
 
 ## Verification Matrix
 
