@@ -26,10 +26,9 @@ const providerSpecs = {
     modelEnv: "GEMINI_MODEL",
     authProfile: "gemini-header",
     defaultStream: false,
-    body: (model) => ({
+    body: () => ({
       contents: [{ role: "user", parts: [{ text: "Say hello in one short sentence." }] }],
       generationConfig: { temperature: 0 },
-      model,
     }),
   },
   claude: {

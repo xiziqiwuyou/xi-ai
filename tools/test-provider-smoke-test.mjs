@@ -47,6 +47,7 @@ async function main() {
   const dryJson = JSON.parse(dryRun.stdout);
   assert.equal(dryJson.results.length, 3);
   assert.equal(dryJson.results.find((item) => item.provider === "gemini").requestValid, true);
+  assert.deepEqual(dryJson.results.find((item) => item.provider === "gemini").bodyKeys, ["contents", "generationConfig"]);
   assert.match(dryRun.stdout, /streamGenerateContent/);
   assert.doesNotMatch(dryRun.stdout, /TOKEN|API_KEY|unit-test-secret/);
 
