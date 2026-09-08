@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xi AI 模型接口文档</title>
+    <meta name="description" content="Xi AI 模型接口文档，兼容 OpenAI、Gemini、Claude 原生协议，支持 cURL 在线测试与返回调试。" />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar" aria-label="接口导航">
+        <div class="brand">
+            <div class="brand-mark">X</div>
+            <div>
+              <strong>Xi AI</strong>
+              <span>模型接口控制台</span>
+          </div>
+        </div>
+        <div class="sidebar-status">
+          <span>OpenAPI Mirror</span>
+          <span>2026 UI</span>
+        </div>
+        <label class="search">
+          <span>搜索文档</span>
+          <span class="search-box">
+            <input id="searchInput" type="search" placeholder="接口、路径、参数..." autocomplete="off" />
+          </span>
+        </label>
+        <div class="filters" role="group" aria-label="请求方法筛选">
+          <button class="filter active" data-filter="all" type="button" aria-pressed="true">全部</button>
+          <button class="filter" data-filter="post" type="button" aria-pressed="false">POST</button>
+          <button class="filter" data-filter="get" type="button" aria-pressed="false">GET</button>
+          <button class="filter" data-filter="delete" type="button" aria-pressed="false">DELETE</button>
+        </div>
+        <div class="provider-filters" role="group" aria-label="Provider 筛选">
+          <button class="provider-filter active" data-provider-filter="all" type="button" aria-pressed="true">全部 Provider</button>
+          <button class="provider-filter" data-provider-filter="openai" type="button" aria-pressed="false">OpenAI</button>
+          <button class="provider-filter" data-provider-filter="gemini" type="button" aria-pressed="false">Gemini</button>
+          <button class="provider-filter" data-provider-filter="claude" type="button" aria-pressed="false">Claude</button>
+        </div>
+        <div class="nav-heading">
+          <span>接口目录</span>
+          <strong id="resultCount"></strong>
+        </div>
+        <nav id="navList" class="nav-list"></nav>
+      </aside>
+
+      <main class="main">
+        <header class="hero">
+          <div class="hero-copy">
+            <div class="mobile-hero-brand" aria-hidden="true">
+              <div class="brand-mark">X</div>
+              <div>
+                <strong>Xi AI</strong>
+                <span>模型接口控制台</span>
+              </div>
+            </div>
+            <p class="eyebrow"><span>API Reference</span><span>Integration Workbench</span></p>
+            <h1>Xi AI API 文档</h1>
+            <p class="lead">查询 OpenAI、Gemini 与 Claude 兼容接口，在同一工作台生成请求、在线调试并检查统一响应。</p>
+          </div>
+          <div class="stats" id="stats"></div>
+        </header>
+
+        <section class="toolbar" aria-label="请求环境">
+          <div class="toolbar-copy">
+            <span>Request Environment</span>
+            <strong>调用环境 · api.xi-ai.cn</strong>
+          </div>
+          <div class="field">
+            <label for="baseUrl">Base URL</label>
+            <input id="baseUrl" value="https://api.xi-ai.cn" />
+          </div>
+          <div class="field token-field">
+            <label for="apiToken">Token</label>
+            <input id="apiToken" type="password" form="requestForm" placeholder="sk-..." />
+            <div class="token-options">
+              <label class="remember-token" for="rememberToken">
+                <input id="rememberToken" type="checkbox" />
+                <span>本机保存 Token</span>
+              </label>
+              <button id="clearToken" class="quiet-button" type="button">清除</button>
+            </div>
+          </div>
+          <button id="saveConfig" class="icon-button" type="button" title="保存调用环境">保存环境</button>
+          <span id="configStatus" class="sr-only" role="status" aria-live="polite"></span>
+        </section>
+
+        <section id="endpointView" class="endpoint-view"></section>
+        <button id="openTester" class="tester-launcher" type="button" aria-controls="requestTester" aria-expanded="false">
+          <span id="launcherMethod" class="method post">POST</span>
+          <span id="launcherLabel">测试此接口</span>
+        </button>
+      </main>
+
+      <div id="testerBackdrop" class="tester-backdrop" aria-hidden="true"></div>
+
+      <aside id="requestTester" class="tester" aria-label="调用测试" tabindex="-1">
+        <div class="tester-head">
+          <div>
+            <span>Request Lab</span>
+            <strong>调用测试</strong>
+          </div>
+          <div class="tester-actions">
+            <button id="closeTester" class="close-tester" type="button" title="关闭调用测试" aria-label="关闭调用测试"><span aria-hidden="true">&times;</span></button>
+          </div>
+        </div>
+
+        <div class="tester-target" aria-live="polite">
+          <div class="target-line">
+            <span id="testerMethod" class="method post">POST</span>
+            <code id="testerPath">/v1/chat/completions</code>
+          </div>
+          <span id="testerMode" class="target-mode">JSON 请求</span>
+          <span id="testerAvailability" class="target-availability" hidden>该端点仅供查阅，暂不支持在线发送。</span>
+        </div>
+
+        <section class="model-console" id="modelConsole" aria-labelledby="modelConsoleTitle">
+          <div class="model-console-head">
+            <div>
+              <span>Provider Console</span>
+              <strong id="modelConsoleTitle">协议与模型</strong>
+            </div>
+            <span id="modelStatus" class="model-status">未选择</span>
+          </div>
+          <div class="model-grid">
+            <label class="request-field" for="providerSelect">
+              <span class="request-field-label"><span>Provider</span></span>
+              <select id="providerSelect"></select>
+            </label>
+            <label class="request-field" for="authProfileSelect">
+              <span class="request-field-label"><span>认证 profile</span></span>
+              <select id="authProfileSelect"></select>
+            </label>
+            <label class="request-field model-field" for="modelSelect">
+              <span class="request-field-label"><span>模型</span></span>
+              <select id="modelSelect"></select>
+              <input id="modelCustom" type="text" placeholder="输入自定义模型 ID" aria-label="自定义模型 ID" hidden />
+            </label>
+            <label class="request-field operation-field" for="operationSelect">
+              <span class="request-field-label"><span>协议模板</span></span>
+              <select id="operationSelect"></select>
+            </label>
+          </div>
+          <label class="stream-toggle" for="streamToggle">
+            <input id="streamToggle" type="checkbox" />
+            <span>流式响应</span>
+          </label>
+          <div class="model-actions">
+            <button id="syncModels" class="text-button" type="button">同步模型预览</button>
+          </div>
+          <div id="modelSyncStatus" class="field-hint" role="status" aria-live="polite"></div>
+          <div id="modelSyncPreview" class="model-sync-preview" hidden></div>
+        </section>
+
+        <div class="curl-block">
+          <div class="panel-label">
+            <span>Generated command</span>
+            <div class="panel-actions">
+              <div class="curl-modes" role="group" aria-label="cURL 格式">
+                <button type="button" class="curl-mode active" data-curl-mode="bash" aria-pressed="true">Bash</button>
+                <button type="button" class="curl-mode" data-curl-mode="powershell" aria-pressed="false">PowerShell</button>
+              </div>
+              <button id="copyCurl" class="text-button" type="button" title="复制当前 cURL">复制 cURL</button>
+            </div>
+          </div>
+          <pre id="curlBox" class="code"></pre>
+        </div>
+
+        <div class="code-example-block">
+          <div class="panel-label"><span>Code example</span><span>代码示例</span></div>
+          <div class="code-toolbar">
+            <div class="code-modes" role="tablist" aria-label="代码示例格式">
+              <button id="codeTabJavascript" type="button" role="tab" class="code-mode active" data-code-mode="javascript" aria-selected="true" aria-controls="codeExampleBox" tabindex="0">Node.js</button>
+              <button id="codeTabPython" type="button" role="tab" class="code-mode" data-code-mode="python" aria-selected="false" aria-controls="codeExampleBox" tabindex="-1">Python</button>
+            </div>
+            <button id="copyCode" class="text-button" type="button" title="复制当前代码示例">复制代码</button>
+          </div>
+          <pre id="codeExampleBox" class="code" role="tabpanel" aria-labelledby="codeTabJavascript" tabindex="0"></pre>
+        </div>
+
+        <form id="requestForm" class="request-form" novalidate>
+          <section class="request-section" id="parameterEditor" aria-labelledby="parameterEditorTitle">
+            <div class="request-section-head">
+              <div>
+                <span>Request parameters</span>
+                <strong id="parameterEditorTitle">请求参数</strong>
+              </div>
+              <span id="parameterSummary" class="section-count"></span>
+            </div>
+            <div id="pathFields" class="field-group" hidden>
+              <div class="field-group-title">路径参数 <code>path</code></div>
+              <div id="pathFieldList" class="field-grid"></div>
+            </div>
+            <div id="queryFields" class="field-group" hidden>
+              <div class="field-group-title">查询参数 <code>query</code></div>
+              <div id="queryFieldList" class="field-grid"></div>
+            </div>
+            <div id="headerFields" class="field-group" hidden>
+              <div class="field-group-title">请求头 <code>header</code></div>
+              <div id="headerFieldList" class="field-grid"></div>
+            </div>
+            <p id="noParameterFields" class="empty tester-empty">该接口没有可编辑的路径、查询或自定义请求头参数。</p>
+          </section>
+
+          <section class="request-section" id="jsonEditorSection" aria-labelledby="jsonEditorTitle">
+            <div class="request-section-head">
+              <div>
+                <span>Payload</span>
+                <strong id="jsonEditorTitle">JSON 请求体</strong>
+              </div>
+              <div class="section-actions">
+                <button id="formatJson" class="text-button" type="button">格式化</button>
+                <button id="resetRequest" class="text-button" type="button">重置示例</button>
+              </div>
+            </div>
+            <textarea id="requestBody" spellcheck="false" aria-labelledby="jsonEditorTitle" aria-describedby="bodyValidation"></textarea>
+            <div id="bodyValidation" class="field-hint" role="status"></div>
+          </section>
+
+          <section class="request-section" id="multipartEditorSection" aria-labelledby="multipartEditorTitle" hidden>
+            <div class="request-section-head">
+              <div>
+                <span>Multipart payload</span>
+                <strong id="multipartEditorTitle">表单与文件</strong>
+              </div>
+              <span class="content-type-label">multipart/form-data</span>
+            </div>
+            <div id="multipartFieldList" class="multipart-list"></div>
+            <p class="field-hint">文件路径仅用于生成 curl；浏览器请求使用上方选择的本地文件。</p>
+          </section>
+
+          <div class="request-actions">
+            <button id="sendRequest" class="send" type="submit">发送请求</button>
+            <button id="cancelRequest" class="cancel" type="button" hidden>取消请求</button>
+          </div>
+        </form>
+
+        <section class="response-panel" aria-labelledby="responseTitle">
+          <div class="response-head">
+            <div>
+              <span>Response</span>
+              <strong id="responseTitle">响应结果</strong>
+            </div>
+            <div class="section-actions">
+              <button id="copyResponse" class="text-button" type="button">复制当前响应</button>
+              <button id="clearResponse" class="text-button" type="button">清空</button>
+            </div>
+          </div>
+          <div class="response-meta" id="responseMeta" role="status" aria-live="polite">等待请求</div>
+          <div class="response-tabs" role="tablist" aria-label="响应视图">
+            <button id="responseTabRaw" type="button" role="tab" class="response-tab active" data-response-view="raw" aria-selected="true" aria-controls="responseBox" tabindex="0">原始响应</button>
+            <button id="responseTabDebug" type="button" role="tab" class="response-tab" data-response-view="debug" aria-selected="false" aria-controls="responseDebug" tabindex="-1">统一调试</button>
+          </div>
+          <div id="responseHeaders" class="response-headers" hidden></div>
+          <div id="responseMedia" class="response-media" hidden></div>
+          <pre id="responseBox" class="code muted" role="tabpanel" aria-labelledby="responseTabRaw" tabindex="0">运行请求后，响应会显示在这里。</pre>
+          <div id="responseDebug" class="response-debug" role="tabpanel" aria-labelledby="responseTabDebug" tabindex="0" hidden></div>
+        </section>
+      </aside>
+    </div>
+    <script src="./assets/request-utils.js"></script>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>

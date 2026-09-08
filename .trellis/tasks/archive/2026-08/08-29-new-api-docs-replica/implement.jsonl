@@ -1,0 +1,6 @@
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"The task changes the OpenAPI-to-JSON-to-browser request/response data contract across generator and frontend layers."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"The request serializers and response adapters should extend existing helpers instead of duplicating URL, escaping, and normalization logic."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"The task changes an accessible static frontend and needs the project quality and visual verification rules."}
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"The Request Lab adds composed controls and semantic form states to the existing page shell."}
+{"file":".trellis/spec/frontend/state-management.md","reason":"The task introduces endpoint-scoped request editor state and transient request/response state."}
+{"file":".trellis/spec/backend/quality-guidelines.md","reason":"The generator is a Node data transformation boundary and needs the available backend quality guidance."}

@@ -1,3 +1,19 @@
+# Local visual and archive artifacts
+audit-*/
+*.png
+*.zip
+
+# Local orchestration state
+.omx/
+.trellis/.developer
+.trellis/.runtime/
+.trellis/**/__pycache__/
+.trellis/workspace/*/journal-*.md
+
+# Sensitive source export: contains captured Apifox request history
+source-new-api-docs/openapi/NewAPI.apifox.json
+
+# Common local files
 .DS_Store
 Thumbs.db
 *.log

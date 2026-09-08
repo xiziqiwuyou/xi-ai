@@ -1,0 +1,4 @@
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Review the complete data-flow and boundary checks for generated endpoint metadata and browser serialization."}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Review keyboard access, responsive behavior, syntax checks, and test expectations for the static UI."}
+{"file":".trellis/spec/frontend/component-guidelines.md","reason":"Review semantic controls, labels, and component composition in the Request Lab."}
+{"file":".trellis/spec/backend/quality-guidelines.md","reason":"Review generator validation and reproducibility checks."}

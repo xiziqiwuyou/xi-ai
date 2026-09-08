@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Review the release against source boundaries, evidence requirements, and prohibited unsupported claims."}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Review credential redaction, failure handling, and external blocker reporting."}
+{"file": ".trellis/spec/frontend/provider-request-contracts.md", "reason": "Review provider smoke behavior against shared serialization and canonical debug contracts."}
+{"file": ".trellis/spec/frontend/interaction-deployment-contracts.md", "reason": "Review host/domain/container boundaries and api.xi-ai.cn preservation."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Review regression coverage, browser safety, and final validation commands."}

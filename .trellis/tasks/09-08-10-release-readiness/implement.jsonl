@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Release work must preserve source/output boundaries and report unavailable Docker or external evidence honestly."}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Provider and deployment validation must fail closed, preserve useful errors, and never expose credentials."}
+{"file": ".trellis/spec/frontend/provider-request-contracts.md", "reason": "Real smoke tests and any runner must use the existing provider operation and redaction contracts."}
+{"file": ".trellis/spec/frontend/interaction-deployment-contracts.md", "reason": "Deployment and domain work must preserve docs.xi-ai.cn boundaries, endpoint navigation, and credential safety."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Release checks must retain the static browser baseline and distinguish fixture from real validation."}

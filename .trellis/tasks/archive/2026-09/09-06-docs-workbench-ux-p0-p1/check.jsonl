@@ -1,0 +1,4 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `C:/Users/56252/AppData/Local/Programs/Python/Python312/python.exe .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Required syntax, data, browser, and responsive checks"}
+{"file": ".trellis/spec/frontend/provider-request-contracts.md", "reason": "Provider regression assertions"}
+{"file": ".trellis/tasks/09-06-docs-workbench-ux-p0-p1/prd.md", "reason": "Observable acceptance criteria"}
