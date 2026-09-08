@@ -21,7 +21,16 @@ workspace, so those gates remain blocked or unverified.
 - Git smart-protocol access from this Windows environment resets or times out.
   Any published commit will therefore be created through the authenticated
   GitHub Git Data API and compared with `main` before the branch is updated.
-- Review branch and resulting integration commit: **pending this release run**.
+- Review branch: `release/readiness-111a66f`.
+- Content-verified review tree commit:
+  `ba92b33fa46607ce65754fa83546d8c60fb8c7e9` (tree
+  `7b3d5dd6530ab66bf3b2efff8843f636f4b0677a`). It is descended from the
+  reviewed candidate `073ce5e49c6974e4945c58ddadbe6eea03525b80`, whose parent
+  is the inspected `main` revision. The correction commit only normalizes
+  Git-object bytes; it does not change application content.
+- GitHub comparison before merging: `ahead 2`, `behind 0`, status `ahead`;
+  local and remote trees both contain 433 files with zero blob mismatches.
+- The target `main` branch has not been changed yet in this evidence snapshot.
 
 ## Verification Matrix
 
@@ -70,7 +79,8 @@ The runner intentionally prints no raw request or response content.
 
 1. GitHub: restore the previous reviewed `main` revision
    `0aac93e800ed5e8c0c4e416cf4efc277d88a8951`; do not force-push or delete
-   unknown history.
+   unknown history. The review branch is
+   `release/readiness-111a66f` and can be deleted after the release decision.
 2. Container: stop the new Compose project and restore the prior image tag or
    digest recorded by the deployment operator.
 3. Host: restore the prior Nginx include and certificate configuration, then

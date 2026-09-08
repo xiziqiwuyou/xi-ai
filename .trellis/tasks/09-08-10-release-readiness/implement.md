@@ -21,10 +21,10 @@ provider call if a prerequisite is missing.
       read-only commands.
 - [x] Compare the current workspace against the target checkout; preserve
       unrelated files and unknown remote commits.
-- [ ] Create a focused commit or branch containing the static project and
+- [x] Create a focused commit or branch containing the static project and
       Trellis artifacts.
-- [ ] Push only after reviewing the commit diff and branch target.
-- [ ] Capture remote URL, branch, commit hash, and push response.
+- [x] Push only after reviewing the commit diff and branch target.
+- [x] Capture remote URL, branch, commit hash, and push response.
 
 Validation:
 ~~~powershell
@@ -91,6 +91,7 @@ test result, and before/after API-domain check.
 ## Gate 4: Real Provider Smoke Tests
 
 - [x] Run a dry-run that prints request method/path/header names only.
+- [x] Add and fixture-test a credential-safe provider smoke runner.
 - [ ] Export temporary least-privilege keys in the operator shell.
 - [ ] Probe OpenAI-compatible, Gemini native, and Claude native requests.
 - [ ] Probe streaming where the model/account supports it.
