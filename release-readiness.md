@@ -30,7 +30,10 @@ workspace, so those gates remain blocked or unverified.
   Git-object bytes; it does not change application content.
 - GitHub comparison before merging: `ahead 2`, `behind 0`, status `ahead`;
   local and remote trees both contain 433 files with zero blob mismatches.
-- The target `main` branch has not been changed yet in this evidence snapshot.
+- Final GitHub ref update: `main` fast-forwarded with `force=false` from
+  `0aac93e800ed5e8c0c4e416cf4efc277d88a8951` to
+  `5c98e15c564ffa99d127e7b88e1df9ab451d50eb`. The review branch and `main`
+  now point to the same commit.
 
 ## Verification Matrix
 
