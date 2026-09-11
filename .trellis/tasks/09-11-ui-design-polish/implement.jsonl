@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend pre-development checklist and layer ownership for the static workbench."}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Semantic region ownership, safe rendering, and accessibility rules for UI markup changes."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Required browser, accessibility, responsive, and no-secret validation for UI work."}
+{"file": ".trellis/spec/frontend/interaction-deployment-contracts.md", "reason": "Protected navigation, drawer, focus, credential, and endpoint behavior contracts."}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Single-page state and async identity constraints to preserve during presentation changes."}
+{"file": ".trellis/spec/guides/index.md", "reason": "Shared reasoning and pre-modification guidance for cross-file UI changes."}

@@ -63,12 +63,43 @@ server_name -> docs.xi-ai.cn
 - Copy actions operate only on already-rendered, redacted text.
 - Figma capture loads only when figmaCapture=1 or figmaCapture=true is present.
 
+### Figma capture URL state
+
+- The capture client is loaded only by the opt-in `figmaCapture` query flag;
+  ordinary production loads must not fetch the remote capture script.
+- A capture URL uses hash parameters such as `figmacapture` and
+  `figmaendpoint` in addition to the normal endpoint selection. While that
+  marker is present, `updateEndpointHash(id)` must update only `endpoint` and
+  preserve the capture parameters until the capture has been submitted.
+- `figmaTester=1` is a capture-only query opt-in. It may open the compact
+  tester after initialization when the compact media query matches, but it
+  must not alter ordinary navigation or desktop behavior.
+
+~~~js
+const currentHash = window.location.hash;
+if (currentHash.includes("figmacapture=")) {
+  const params = new URLSearchParams(currentHash.replace(/^#/, ""));
+  params.set("endpoint", id);
+  history.replaceState(null, "", `#${params.toString()}`);
+  return;
+}
+history.replaceState(null, "", endpointHash(id));
+~~~
+
+This preservation is required because the capture client reads its submission
+endpoint from the hash. Replacing the hash with only `endpoint` makes an
+otherwise healthy Figma capture remain pending, while leaking capture
+parameters into ordinary links would make the production URL contract noisy.
+
 ### Responsive Request Lab
 
 - Above 1180px, Request Lab is the sticky third workspace column.
 - At or below 1180px, Request Lab is an inert off-canvas dialog until the launcher opens it.
 - Open sets dialog semantics, backdrop state, body scroll lock, and focus on closeTester.
 - Escape, the backdrop, and closeTester close the drawer. Focus returns to the trigger.
+- Keep the drawer semantics synchronized from both the `matchMedia` change and
+  `resize` events so rapid viewport changes cannot leave stale `aria-hidden` or
+  `inert` state behind.
 - Response and code tabs expose tablist/tab/tabpanel semantics, selected state, roving tabindex, and arrow-key navigation.
 
 ### Deployment
