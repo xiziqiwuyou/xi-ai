@@ -462,6 +462,7 @@ async function main() {
     await page.waitForTimeout(50);
     assert.equal(await page.locator("#openTester").isVisible(), true);
     assert.equal(await page.locator("#openTester").getAttribute("aria-expanded"), "false");
+    await page.waitForFunction(() => document.querySelector("#requestTester")?.getAttribute("aria-hidden") === "true");
     assert.equal(await page.locator("#requestTester").getAttribute("aria-hidden"), "true");
     await page.click("#openTester");
     assert.equal(await page.locator("#openTester").getAttribute("aria-expanded"), "true");

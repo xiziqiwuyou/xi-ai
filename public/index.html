@@ -19,8 +19,8 @@
           </div>
         </div>
         <div class="sidebar-status">
-          <span>OpenAPI Mirror</span>
-          <span>2026 UI</span>
+          <span><i class="status-dot" aria-hidden="true"></i>OpenAPI Mirror</span>
+          <span>43 endpoints</span>
         </div>
         <label class="search">
           <span>搜索文档</span>
@@ -58,16 +58,26 @@
               </div>
             </div>
             <p class="eyebrow"><span>API Reference</span><span>Integration Workbench</span></p>
-            <h1>Xi AI API 文档</h1>
-            <p class="lead">查询 OpenAI、Gemini 与 Claude 兼容接口，在同一工作台生成请求、在线调试并检查统一响应。</p>
+            <div class="hero-title-row">
+              <div>
+                <h1>Xi AI API 文档</h1>
+                <p class="lead">查询 OpenAI、Gemini 与 Claude 兼容接口，在同一工作台生成请求、在线调试并检查统一响应。</p>
+              </div>
+              <div class="hero-context" aria-label="文档服务状态">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span>api.xi-ai.cn</span>
+                <small>可配置调用环境</small>
+              </div>
+            </div>
           </div>
           <div class="stats" id="stats"></div>
         </header>
 
         <section class="toolbar" aria-label="请求环境">
           <div class="toolbar-copy">
-            <span>Request Environment</span>
-            <strong>调用环境 · api.xi-ai.cn</strong>
+            <span class="toolbar-label"><i class="status-dot" aria-hidden="true"></i>Request Environment</span>
+            <strong>调用环境</strong>
+            <small>直接发送到你填写的 Base URL</small>
           </div>
           <div class="field">
             <label for="baseUrl">Base URL</label>
@@ -91,7 +101,11 @@
         <section id="endpointView" class="endpoint-view"></section>
         <button id="openTester" class="tester-launcher" type="button" aria-controls="requestTester" aria-expanded="false">
           <span id="launcherMethod" class="method post">POST</span>
-          <span id="launcherLabel">测试此接口</span>
+          <span class="launcher-copy">
+            <span id="launcherLabel">测试此接口</span>
+            <code id="launcherPath">/v1/chat/completions</code>
+          </span>
+          <span class="launcher-arrow" aria-hidden="true">↗</span>
         </button>
       </main>
 
@@ -100,15 +114,17 @@
       <aside id="requestTester" class="tester" aria-label="调用测试" tabindex="-1">
         <div class="tester-head">
           <div>
-            <span>Request Lab</span>
+            <span class="surface-kicker">Request Lab</span>
             <strong>调用测试</strong>
+            <small id="testerHeaderContext">当前选中接口</small>
           </div>
           <div class="tester-actions">
             <button id="closeTester" class="close-tester" type="button" title="关闭调用测试" aria-label="关闭调用测试"><span aria-hidden="true">&times;</span></button>
           </div>
         </div>
 
-        <div class="tester-target" aria-live="polite">
+        <div class="tester-target tester-flow-section" aria-live="polite">
+          <div class="flow-kicker"><span class="flow-number">01</span><span>Target</span><span>请求目标</span></div>
           <div class="target-line">
             <span id="testerMethod" class="method post">POST</span>
             <code id="testerPath">/v1/chat/completions</code>
@@ -117,7 +133,8 @@
           <span id="testerAvailability" class="target-availability" hidden>该端点仅供查阅，暂不支持在线发送。</span>
         </div>
 
-        <section class="model-console" id="modelConsole" aria-labelledby="modelConsoleTitle">
+        <section class="model-console tester-flow-section" id="modelConsole" aria-labelledby="modelConsoleTitle">
+          <div class="flow-kicker"><span class="flow-number">02</span><span>Setup</span><span>协议与模型</span></div>
           <div class="model-console-head">
             <div>
               <span>Provider Console</span>
@@ -155,7 +172,8 @@
           <div id="modelSyncPreview" class="model-sync-preview" hidden></div>
         </section>
 
-        <div class="curl-block">
+        <div class="curl-block tester-flow-section">
+          <div class="flow-kicker"><span class="flow-number">03</span><span>Examples</span><span>生成命令</span></div>
           <div class="panel-label">
             <span>Generated command</span>
             <div class="panel-actions">
@@ -169,7 +187,8 @@
           <pre id="curlBox" class="code"></pre>
         </div>
 
-        <div class="code-example-block">
+        <div class="code-example-block tester-flow-section">
+          <div class="flow-kicker"><span class="flow-number">03</span><span>Examples</span><span>代码示例</span></div>
           <div class="panel-label"><span>Code example</span><span>代码示例</span></div>
           <div class="code-toolbar">
             <div class="code-modes" role="tablist" aria-label="代码示例格式">
@@ -181,7 +200,8 @@
           <pre id="codeExampleBox" class="code" role="tabpanel" aria-labelledby="codeTabJavascript" tabindex="0"></pre>
         </div>
 
-        <form id="requestForm" class="request-form" novalidate>
+        <form id="requestForm" class="request-form tester-flow-section" novalidate>
+          <div class="flow-kicker"><span class="flow-number">04</span><span>Request</span><span>编辑请求</span></div>
           <section class="request-section" id="parameterEditor" aria-labelledby="parameterEditorTitle">
             <div class="request-section-head">
               <div>
@@ -232,13 +252,14 @@
             <p class="field-hint">文件路径仅用于生成 curl；浏览器请求使用上方选择的本地文件。</p>
           </section>
 
-          <div class="request-actions">
+          <div class="request-actions" aria-label="请求操作">
             <button id="sendRequest" class="send" type="submit">发送请求</button>
             <button id="cancelRequest" class="cancel" type="button" hidden>取消请求</button>
           </div>
         </form>
 
-        <section class="response-panel" aria-labelledby="responseTitle">
+        <section class="response-panel tester-flow-section" aria-labelledby="responseTitle">
+          <div class="flow-kicker"><span class="flow-number">05</span><span>Inspect</span><span>响应与调试</span></div>
           <div class="response-head">
             <div>
               <span>Response</span>

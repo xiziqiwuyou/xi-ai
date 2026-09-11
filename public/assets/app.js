@@ -41,6 +41,8 @@ const els = {
   testerBackdrop: document.getElementById("testerBackdrop"),
   launcherMethod: document.getElementById("launcherMethod"),
   launcherLabel: document.getElementById("launcherLabel"),
+  launcherPath: document.getElementById("launcherPath"),
+  testerHeaderContext: document.getElementById("testerHeaderContext"),
   testerMethod: document.getElementById("testerMethod"),
   testerPath: document.getElementById("testerPath"),
   testerMode: document.getElementById("testerMode"),
@@ -88,6 +90,7 @@ const els = {
 };
 
 const testerMedia = window.matchMedia("(max-width: 1180px)");
+window.addEventListener("resize", syncTesterDrawer);
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -197,7 +200,15 @@ function endpointIdFromHash() {
 function updateEndpointHash(id) {
   if (!id) return;
   const nextHash = endpointHash(id);
-  if (window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
+  const currentHash = window.location.hash;
+  if (currentHash.includes("figmacapture=")) {
+    const captureParams = new URLSearchParams(currentHash.replace(/^#/, ""));
+    captureParams.set("endpoint", id);
+    const captureHash = `#${captureParams.toString()}`;
+    if (currentHash !== captureHash) history.replaceState(null, "", captureHash);
+    return;
+  }
+  if (currentHash !== nextHash) history.replaceState(null, "", nextHash);
 }
 
 function setButtonSelection(selector, predicate, attribute = "aria-pressed") {
@@ -467,7 +478,13 @@ function renderEndpoint() {
           ${endpoint.supportsStreaming ? '<span class="stream-badge">支持流式</span>' : ""}
           <span>operationId: <code>${escapeHtml(endpoint.operationId || "-")}</code></span>
         </div>
-        <h2>${escapeHtml(endpoint.title)}</h2>
+        <div class="endpoint-heading">
+          <div>
+            <span class="endpoint-label">Selected endpoint</span>
+            <h2>${escapeHtml(endpoint.title)}</h2>
+          </div>
+          <span class="endpoint-status ${endpoint.documentationOnly ? "documentation" : "runnable"}">${endpoint.documentationOnly ? "仅文档" : "可在线测试"}</span>
+        </div>
         <div class="pathline">
           <span class="method ${methodClass(endpoint.method)}">${escapeHtml(endpoint.method)}</span>
           <code>${escapeHtml(endpoint.path)}</code>
@@ -990,6 +1007,8 @@ function renderTesterTarget() {
     els.launcherMethod.className = "method";
     els.launcherMethod.textContent = "-";
     els.launcherLabel.textContent = "暂无可测试接口";
+    els.launcherPath.textContent = "当前没有匹配项";
+    els.testerHeaderContext.textContent = "尚未选择接口";
     return;
   }
   const plan = buildCurrentPlan(true);
@@ -1002,6 +1021,8 @@ function renderTesterTarget() {
   els.launcherMethod.className = `method ${methodClass(plan.method)}`;
   els.launcherMethod.textContent = plan.method;
   els.launcherLabel.textContent = endpoint.documentationOnly ? "查看接口示例" : "测试此接口";
+  els.launcherPath.textContent = plan.displayUrl || endpoint.path;
+  els.testerHeaderContext.textContent = `${endpoint.title} · ${endpoint.method} ${endpoint.path}`;
 }
 
 function renderRequestEditors() {
@@ -1624,6 +1645,14 @@ function maybeLoadFigmaCapture() {
   document.head.appendChild(script);
 }
 
+function maybeOpenFigmaTester() {
+  const params = new URLSearchParams(window.location.search);
+  const captureEnabled = params.get("figmaCapture");
+  if (!captureEnabled || !["1", "true"].includes(captureEnabled.toLowerCase())) return;
+  if (params.get("figmaTester") !== "1" || !testerMedia.matches) return;
+  requestAnimationFrame(() => openTesterDrawer());
+}
+
 function handleRequestInput(event) {
   const target = event.target;
   if (target.matches("[data-request-location]")) {
@@ -1778,8 +1807,8 @@ function bindEvents() {
   els.testerBackdrop.addEventListener("click", () => closeTesterDrawer());
   document.addEventListener("keydown", handleTesterKeyboard);
   window.addEventListener("hashchange", handleHashNavigation);
-  if (testerMedia.addEventListener) testerMedia.addEventListener("change", () => closeTesterDrawer({ restoreFocus: false }));
-  else testerMedia.addListener(() => closeTesterDrawer({ restoreFocus: false }));
+  if (testerMedia.addEventListener) testerMedia.addEventListener("change", syncTesterDrawer);
+  else testerMedia.addListener(syncTesterDrawer);
   els.providerSelect.addEventListener("change", (event) => handleProviderChange(event.target.value));
   els.authProfileSelect.addEventListener("change", (event) => {
     if (!state.request) return;
@@ -1850,6 +1879,7 @@ async function init() {
   bindEvents();
   syncTesterDrawer();
   maybeLoadFigmaCapture();
+  maybeOpenFigmaTester();
 }
 
 init().catch((error) => {
